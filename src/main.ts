@@ -1,5 +1,6 @@
 const newWindow = window as any
 const Terminal = newWindow.Terminal
+const FitAddon = newWindow.FitAddon
 
 function getFormData(form: HTMLFormElement) {
     let formData = new FormData(form)
@@ -32,9 +33,9 @@ let ssh_form = document.getElementById('ssh-login') as HTMLFormElement
 ssh_form.addEventListener("submit", (e) => {
     e.preventDefault()
     let formData = getFormData(ssh_form)
-    let cols = (<Element>ssh_form.elements.namedItem('cols')).innerHTML
-    term.resize(Number((<Element>ssh_form.elements.namedItem('cols')).innerHTML), 
-    bufferLength + Number((<Element>ssh_form.elements.namedItem('rows')).innerHTML));
+    let cols = (<HTMLInputElement>ssh_form.elements.namedItem('cols')).value
+    let rows = (<HTMLInputElement>ssh_form.elements.namedItem('rows')).value
+    term.resize(cols, rows)
     
     ws = new WebSocket(
         'ws://localhost:80/?' + formData

@@ -1,6 +1,7 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const xterm_1 = window.Terminal;
+const newWindow = window;
+const Terminal = newWindow.Terminal;
+const FitAddon = newWindow.FitAddon;
 function getFormData(form) {
     let formData = new FormData(form);
     let formString = '';
@@ -10,7 +11,7 @@ function getFormData(form) {
     }
     return formString;
 }
-const term = new xterm_1.Terminal({ cursorBlink: true });
+const term = new Terminal({ cursorBlink: true });
 //const fitAddon = new FitAddon.FitAddon()
 //term._addonManager.loadAddon(fitAddon)
 term.open(document.getElementById('terminal'));
@@ -20,8 +21,9 @@ let ssh_form = document.getElementById('ssh-login');
 ssh_form.addEventListener("submit", (e) => {
     e.preventDefault();
     let formData = getFormData(ssh_form);
-    let cols = ssh_form.elements.namedItem('cols').innerHTML;
-    term.resize(Number(ssh_form.elements.namedItem('cols').innerHTML), bufferLength + Number(ssh_form.elements.namedItem('rows').innerHTML));
+    let cols = ssh_form.elements.namedItem('cols').value;
+    let rows = ssh_form.elements.namedItem('rows').value;
+    term.resize(cols, rows);
     ws = new WebSocket('ws://localhost:80/?' + formData);
     ws.onmessage = (msg) => {
         let prefix = msg.data.split("|")[0];
@@ -38,7 +40,7 @@ ssh_form.addEventListener("submit", (e) => {
 });
 let command = '';
 // Browser to server
-term.onData(e => {
+term.onData((e) => {
     ws.send('cmd|' + e);
 });
 //const exampleSocket = new WebSocket(
